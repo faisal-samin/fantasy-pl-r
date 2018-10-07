@@ -4,30 +4,36 @@
 # https://fantasy.premierleague.com/drf/elements/: Contains player IDs, names and other general details
 # https://fantasy.premierleague.com/drf/element-summary/{id}: contains detailed stats on footballers
 
-# 1) Import (and install) required modules
+
+# Modules and import data -------------------------------------------------
+
 library(tidyverse)
 library(jsonlite)
-
-# 2) Import and view data
 
 # fromJSON flattens the json file
 elements <- fromJSON("https://fantasy.premierleague.com/drf/elements/")
 View(elements)
 
-# note that 'now_cost' and 'selected_by_percent' will change
+# note that 'now_cost' and 'selected_by_percent' will change frequently
 colnames(elements)
 
 # while there are some general stats here (like goal_scored), these aren't split by gameweek
 # we only want general details from this json
 
-# 3) Transforming the data
 
-# Issue with long player names 
+# Data transformation -----------------------------------------------------
+
+# Issues
+# Long player names 
 # some players have more than one first name, we want to only select the first one
 # this only affects surnames but it's more difficult to arbitrarily select the correct name
 
-index = elements %>%
-  mutate(name = paste(word(first_name, 1), second_name, sep = " ")) %>%
+player_summary = elements %>%
+  mutate(name = 
+           paste(word(first_name, 1), 
+                 second_name, 
+                 sep = " ")
+         ) %>%
   select(id, name, now_cost, selected_by_percent, element_type, team, photo) %>%
   mutate(position = recode(element_type,
                            `1` = 'gk',
@@ -57,3 +63,11 @@ index = elements %>%
                        `20` = 'Wolves')) %>%
   arrange(id, team, element_type) %>%
   select(id, name, now_cost, selected_by_percent, team, position, photo)
+
+# We now join onto gameweek level from the second API
+
+# Using hazard as an example
+hazard = fromJSON("https://fantasy.premierleague.com/drf/element-summary/122")
+
+select(hazard$history, ''
+
