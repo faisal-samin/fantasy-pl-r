@@ -94,7 +94,7 @@ fpl$image_url = paste("https://platform-static-files.s3.amazonaws.com/premierlea
                       ".png",
                       sep = "")
 
-write_csv(fpl, "fpl.csv")
+# write_csv(fpl, "fpl.csv")
 
 # Reordering columns and dropping those not of interest
 fpl <- select(fpl,
@@ -139,5 +139,6 @@ fpl <- select(fpl,
               opponent_team,                  
               image_url)
 
+saveRDS(fpl, "fpl_data.rds")
 
 
